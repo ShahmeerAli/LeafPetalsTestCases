@@ -60,4 +60,8 @@ COPY . .
 RUN mvn dependency:go-offline -q || true
 
 # ── 6. Run tests (APP_URL injected at runtime by Jenkins) ────────────────────
-CMD ["mvn", "clean", "test"]
+# NOTE: We use `mvn test` NOT `mvn clean test`
+# `clean` tries to delete /tests/target/surefire-reports which is a mounted
+# volume owned by the Jenkins host user — this causes a permission error.
+# A fresh container already has a clean slate so `clean` is unnecessary.
+CMD ["mvn", "test"]
