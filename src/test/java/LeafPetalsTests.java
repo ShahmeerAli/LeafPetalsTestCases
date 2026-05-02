@@ -1,38 +1,20 @@
-import java.time.Duration;
-import java.util.List;
+package tests;
 
-import org.junit.jupiter.api.AfterAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+import java.util.List;
+import org.openqa.selenium.TimeoutException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Test Suite for Leaf & Petals – Plant E-Commerce Website
- *
- * Prerequisites:
- * - ChromeDriver installed and on system PATH (or set via
- * -Dwebdriver.chrome.driver=...)
- * - Application running locally at http://localhost:3000
- * - At least one plant seeded in the database
- * - A registered test user: email = test@leafpetals.com, password = Test@1234
- * - An admin test user: email = admin@leafpetals.com, password = Admin@1234
- *
- * Run with: mvn test (or any JUnit 5 runner)
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LeafPetalsTests {
@@ -40,9 +22,9 @@ public class LeafPetalsTests {
         private static WebDriver driver;
         private static WebDriverWait wait;
 
-       // Inside LeafPetalsTests.java
         private static final String BASE_URL = "http://127.0.0.1:8081";
-        //new files
+        
+        // --- FIX 2: Restored to the working Admin credentials ---
         private static final String USER_EMAIL = "admin@leafpetals.com";
         private static final String USER_PASSWORD = "Admin@1234";
         private static final String ADMIN_EMAIL = "admin@leafpetals.com";
@@ -55,7 +37,6 @@ public class LeafPetalsTests {
         @BeforeAll
         static void setUp() {
                 ChromeOptions options = new ChromeOptions();
-                // options.addArguments("--headless"); // Uncomment to run headless
                 options.addArguments("--headless"); // CRITICAL for server environments
                 options.addArguments("--disable-gpu");
                 options.addArguments("--no-sandbox"); // Prevents Docker permission issues
@@ -87,6 +68,15 @@ public class LeafPetalsTests {
                 driver.findElement(By.cssSelector("input[placeholder='Enter your email']")).sendKeys(email);
                 driver.findElement(By.cssSelector("input[placeholder='Enter your password']")).clear();
                 driver.findElement(By.cssSelector("input[placeholder='Enter your password']")).sendKeys(password);
+                
+                // --- FIX 1: The React Hydration / CSRF Pause ---
+                try {
+                    Thread.sleep(2000); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // -----------------------------------------------
+
                 driver.findElement(By.cssSelector("button[type='submit'], form button")).click();
                 wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
         }
@@ -379,10 +369,10 @@ public class LeafPetalsTests {
 
                 navigateTo("/cart");
 
-                // Find the subtotal element
+                // Find the subtotal element (sibling span in the same flex row as 'Subtotal')
                 WebElement subtotal = wait.until(
                                 ExpectedConditions.visibilityOfElementLocated(
-                                                By.xpath("//*[contains(text(),'Subtotal')]/following-sibling::*")));
+                                                By.xpath("//div[contains(@class,'flex') and contains(.,'Subtotal')]//span[last()]")));
                 String subtotalText = subtotal.getText();
                 assertFalse(subtotalText.isEmpty(), "Subtotal should be displayed in the cart");
                 assertFalse(subtotalText.equals("$0.00"), "Subtotal should be greater than $0.00");
