@@ -32,7 +32,7 @@ public class LeafPetalsTests {
         private static WebDriver driver;
         private static WebDriverWait wait;
 
-        private static final String BASE_URL = "http://localhost:3000";
+        private static final String BASE_URL = "http://localhost:8081";
         private static final String USER_EMAIL = "test@leafpetals.com";
         private static final String USER_PASSWORD = "Test@1234";
         private static final String ADMIN_EMAIL = "admin@leafpetals.com";
