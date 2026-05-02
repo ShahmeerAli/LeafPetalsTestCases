@@ -41,6 +41,7 @@ public class LeafPetalsTests {
         private static WebDriverWait wait;
 
         private static final String BASE_URL = "http://localhost:8081";
+        //new files
         private static final String USER_EMAIL = "admin@leafpetals.com";
         private static final String USER_PASSWORD = "Admin@1234";
         private static final String ADMIN_EMAIL = "admin@leafpetals.com";
