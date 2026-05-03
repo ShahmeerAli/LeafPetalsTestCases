@@ -68,6 +68,8 @@ public class LeafPetalsTests {
       passInput.sendKeys(password);
  
      // Click the actual submit button instead of form.submit()
+     //added new claude functions
+     
         WebElement loginBtn = wait.until(
         ExpectedConditions.elementToBeClickable(By.cssSelector("form button")));
         loginBtn.click();
