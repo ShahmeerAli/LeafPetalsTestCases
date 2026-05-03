@@ -1,7 +1,6 @@
 package tests;
 
 import org.junit.jupiter.api.*;
-// <-- Ensuring the correct exception is imported
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -10,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,7 +52,6 @@ public class LeafPetalsTests {
                 driver.get(BASE_URL + path);
         }
 
-          // Replace your loginAs method
         private void loginAs(String email, String password) {
                 navigateTo("/login");
                 WebElement emailInput = wait.until(ExpectedConditions
@@ -67,13 +64,12 @@ public class LeafPetalsTests {
                 passInput.sendKeys(password);
                 
                 try {
-                        Thread.sleep(2000); 
+                    Thread.sleep(2000); 
                 } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    e.printStackTrace();
                 }
 
-                // THE ULTIMATE FIX: Force a native DOM click using JavaScript.
-                // This completely bypasses overlapping UI icons AND perfectly triggers NextAuth's React handler.
+                // Force native DOM click using JavaScript to bypass the eye-icon overlay
                 WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
                 
@@ -88,7 +84,7 @@ public class LeafPetalsTests {
                                                         .elementToBeClickable(By.cssSelector("button[type='submit']")));
                         signOutBtn.click();
                         wait.until(ExpectedConditions.urlContains(BASE_URL));
-                } catch (TimeoutException ignored) {
+                } catch (org.openqa.selenium.TimeoutException ignored) {
                         // Already signed out
                 }
         }
@@ -218,7 +214,10 @@ public class LeafPetalsTests {
                                 .sendKeys("wrong@example.com");
                 driver.findElement(By.cssSelector("input[placeholder='Enter your password']"))
                                 .sendKeys("wrongpassword");
-                driver.findElement(By.cssSelector("form button")).click();
+                
+                WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit'], form button"));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
+                
                 WebElement error = wait.until(
                                 ExpectedConditions.visibilityOfElementLocated(
                                                 By.cssSelector("div.bg-red-50")));
@@ -244,7 +243,8 @@ public class LeafPetalsTests {
                 WebElement submitBtn = wait.until(
                                 ExpectedConditions.elementToBeClickable(
                                                 By.cssSelector("form button")));
-                submitBtn.click();
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
+                
                 WebElement error = wait.until(
                                 ExpectedConditions.visibilityOfElementLocated(
                                                 By.cssSelector("div.bg-red-50")));
@@ -278,7 +278,7 @@ public class LeafPetalsTests {
                                         ExpectedConditions.elementToBeClickable(
                                                         By.xpath("//button[contains(text(),'Add to Cart')]")));
                         addToCartBtn.click();
-                } catch (TimeoutException e) {
+                } catch (org.openqa.selenium.TimeoutException e) {
                         return;
                 }
                 navigateTo("/cart");
@@ -305,7 +305,7 @@ public class LeafPetalsTests {
                                         ExpectedConditions.elementToBeClickable(
                                                         By.xpath("//button[contains(text(),'Add to Cart')]")));
                         addBtn.click();
-                } catch (TimeoutException ignored) {
+                } catch (org.openqa.selenium.TimeoutException ignored) {
                 }
                 navigateTo("/cart");
                 WebElement checkoutBtn = wait.until(
@@ -331,7 +331,7 @@ public class LeafPetalsTests {
                                         ExpectedConditions.elementToBeClickable(
                                                         By.xpath("//button[contains(text(),'Add to Cart')]")));
                         addBtn.click();
-                } catch (TimeoutException ignored) {
+                } catch (org.openqa.selenium.TimeoutException ignored) {
                 }
                 navigateTo("/checkout");
                 WebElement addressField = wait.until(
