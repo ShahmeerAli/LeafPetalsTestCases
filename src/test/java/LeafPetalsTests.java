@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
-import org.openqa.selenium.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +21,7 @@ public class LeafPetalsTests {
         private static WebDriver driver;
         private static WebDriverWait wait;
 
-        private static final String BASE_URL = "http://127.0.0.1:8081";
+        private static final String BASE_URL = "http://localhost:8081";// Base URL of the application (adjust if running on a different port
         
         // --- FIX 2: Restored to the working Admin credentials ---
         private static final String USER_EMAIL = "admin@leafpetals.com";
