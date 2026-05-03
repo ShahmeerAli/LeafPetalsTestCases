@@ -30,15 +30,18 @@ public class LeafPetalsTests {
 
         @BeforeAll
         static void setUp() {
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless");
-                options.addArguments("--disable-gpu");
-                options.addArguments("--no-sandbox"); 
-                options.addArguments("--disable-dev-shm-usage"); 
-                options.addArguments("--remote-allow-origins=*");
-                driver = new ChromeDriver(options);
-                driver.manage().window().maximize();
-                wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+          ChromeOptions options = new ChromeOptions();
+          options.addArguments("--headless=new");
+          options.addArguments("--disable-gpu");
+          options.addArguments("--no-sandbox");
+          options.addArguments("--disable-dev-shm-usage");
+          options.addArguments("--single-process");
+          options.addArguments("--disable-extensions");
+          options.addArguments("--disable-setuid-sandbox");
+          options.addArguments("--remote-allow-origins=*");
+          driver = new ChromeDriver(options);
+          driver.manage().window().maximize();
+          wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         }
 
         @AfterAll
@@ -52,29 +55,27 @@ public class LeafPetalsTests {
                 driver.get(BASE_URL + path);
         }
 
-        private void loginAs(String email, String password) {
-                navigateTo("/login");
-                WebElement emailInput = wait.until(ExpectedConditions
-                                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
-                emailInput.clear();
-                emailInput.sendKeys(email);
-                
-                WebElement passInput = driver.findElement(By.cssSelector("input[placeholder='Enter your password']"));
-                passInput.clear();
-                passInput.sendKeys(password);
-                
-                try {
-                    Thread.sleep(2000); 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+   private void loginAs(String email, String password) { 
+      navigateTo("/login");
+      WebElement emailInput = wait.until(ExpectedConditions
+         .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
+      emailInput.clear();
+      emailInput.sendKeys(email);
 
-                // Force native DOM click using JavaScript to bypass the eye-icon overlay
-                WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
-                
-                wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
-        }
+      WebElement passInput = wait.until(ExpectedConditions
+         .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your password']")));
+      passInput.clear();
+      passInput.sendKeys(password);
+ 
+     // Click the actual submit button instead of form.submit()
+        WebElement loginBtn = wait.until(
+        ExpectedConditions.elementToBeClickable(By.cssSelector("form button[type='submit']")));
+        loginBtn.click();
+
+    // Give NextAuth more time to process the session and redirect
+        new WebDriverWait(driver, Duration.ofSeconds(20))
+         .until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
+  }
 
         private void logout() {
                 navigateTo("/api/auth/signout");
