@@ -48,29 +48,8 @@ public class LeafPetalsTests {
 
           // Wait for the app to be fully up before seeding
           Thread.sleep(5000);
-          seedTestUser();
         }
 
-        private static void seedTestUser() {
-         try {
-                String registerUrl = "http://localhost:8081/api/auth/register";
-                String jsonBody = "{\"name\":\"Test User\",\"email\":\"test@leafpetals.com\",\"password\":\"Test@1234\"}";
-
-                 java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
-                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                 .uri(java.net.URI.create(registerUrl))
-                .header("Content-Type", "application/json")
-                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
-
-                 java.net.http.HttpResponse<String> response =
-                 client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
-
-                System.out.println("Seed user response: " + response.statusCode() + " " + response.body());
-         } catch (Exception e) {
-                System.out.println("Seed user failed: " + e.getMessage());
-        }
-        }
 
         @AfterAll
         static void tearDown() {
