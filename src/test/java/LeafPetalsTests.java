@@ -69,7 +69,7 @@ public class LeafPetalsTests {
  
      // Click the actual submit button instead of form.submit()
         WebElement loginBtn = wait.until(
-        ExpectedConditions.elementToBeClickable(By.cssSelector("form button[type='submit']")));
+        ExpectedConditions.elementToBeClickable(By.cssSelector("form button")));
         loginBtn.click();
 
     // Give NextAuth more time to process the session and redirect
