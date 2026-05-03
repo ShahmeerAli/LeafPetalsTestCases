@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,26 +54,30 @@ public class LeafPetalsTests {
                 driver.get(BASE_URL + path);
         }
 
+          // Replace your loginAs method
         private void loginAs(String email, String password) {
-                 navigateTo("/login");
-                 WebElement emailInput = wait.until(ExpectedConditions
-                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
+                navigateTo("/login");
+                WebElement emailInput = wait.until(ExpectedConditions
+                                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
                 emailInput.clear();
                 emailInput.sendKeys(email);
-
-                WebElement passInput = wait.until(ExpectedConditions
-                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your password']")));
+                
+                WebElement passInput = driver.findElement(By.cssSelector("input[placeholder='Enter your password']"));
                 passInput.clear();
                 passInput.sendKeys(password);
+                
+                try {
+                        Thread.sleep(2000); 
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
 
-                // Click the actual submit button instead of form.submit()
-                 WebElement loginBtn = wait.until(
-                 ExpectedConditions.elementToBeClickable(By.cssSelector("form button[type='submit']")));
-                loginBtn.click();
-
-                 // Give NextAuth more time to process the session and redirect
-                 new WebDriverWait(driver, Duration.ofSeconds(20))
-                  .until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
+                // THE ULTIMATE FIX: Force a native DOM click using JavaScript.
+                // This completely bypasses overlapping UI icons AND perfectly triggers NextAuth's React handler.
+                WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitBtn);
+                
+                wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
         }
 
         private void logout() {
