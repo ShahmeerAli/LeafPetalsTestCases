@@ -23,17 +23,17 @@ public class LeafPetalsTests {
 
         private static final String BASE_URL = "http://localhost:8081";
         
-        private static final String USER_EMAIL = "admin@leafpetals.com";
-        private static final String USER_PASSWORD = "Admin@1234";
-        private static final String ADMIN_EMAIL = "admin@leafpetals.com";
-        private static final String ADMIN_PASSWORD = "Admin@1234";
+        private static final String USER_EMAIL = "admin@leafandpetal.com";
+        private static final String USER_PASSWORD = "admin123";
+        private static final String ADMIN_EMAIL = "admin@leafandpetal.com";
+        private static final String ADMIN_PASSWORD = "admin123";
 
        
 
 
 
         @BeforeAll
-        static void setUp() throws Exception {
+        static void setUp() {
           ChromeOptions options = new ChromeOptions();
           options.addArguments("--headless=new");
           options.addArguments("--disable-gpu");
@@ -46,8 +46,6 @@ public class LeafPetalsTests {
           driver = new ChromeDriver(options);
           wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-          // Wait for the app to be fully up before seeding
-          Thread.sleep(5000);
         }
 
 
