@@ -1,6 +1,7 @@
 package tests;
 
 import org.junit.jupiter.api.*;
+// <-- Ensuring the correct exception is imported
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -9,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
-import org.openqa.selenium.TimeoutException; // <-- Ensuring the correct exception is imported
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,24 +54,25 @@ public class LeafPetalsTests {
         }
 
         private void loginAs(String email, String password) {
-                navigateTo("/login");
-                WebElement emailInput = wait.until(ExpectedConditions
-                                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
+                 navigateTo("/login");
+                 WebElement emailInput = wait.until(ExpectedConditions
+                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your email']")));
                 emailInput.clear();
                 emailInput.sendKeys(email);
-                
-                WebElement passInput = driver.findElement(By.cssSelector("input[placeholder='Enter your password']"));
+
+                WebElement passInput = wait.until(ExpectedConditions
+                .visibilityOfElementLocated(By.cssSelector("input[placeholder='Enter your password']")));
                 passInput.clear();
                 passInput.sendKeys(password);
-                
-                try {
-                    Thread.sleep(2000); 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-                passInput.submit();
-                wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
+                // Click the actual submit button instead of form.submit()
+                 WebElement loginBtn = wait.until(
+                 ExpectedConditions.elementToBeClickable(By.cssSelector("form button[type='submit']")));
+                loginBtn.click();
+
+                 // Give NextAuth more time to process the session and redirect
+                 new WebDriverWait(driver, Duration.ofSeconds(20))
+                  .until(ExpectedConditions.not(ExpectedConditions.urlContains("/login")));
         }
 
         private void logout() {
