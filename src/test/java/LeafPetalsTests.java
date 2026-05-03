@@ -30,18 +30,18 @@ public class LeafPetalsTests {
 
         @BeforeAll
         static void setUp() {
-          ChromeOptions options = new ChromeOptions();
-          options.addArguments("--headless=new");
-          options.addArguments("--disable-gpu");
-          options.addArguments("--no-sandbox");
-          options.addArguments("--disable-dev-shm-usage");
-          options.addArguments("--single-process");
-          options.addArguments("--disable-extensions");
-          options.addArguments("--disable-setuid-sandbox");
-          options.addArguments("--remote-allow-origins=*");
-          driver = new ChromeDriver(options);
-          driver.manage().window().maximize();
-          wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+         ChromeOptions options = new ChromeOptions();
+         options.addArguments("--headless=new");
+         options.addArguments("--disable-gpu");
+         options.addArguments("--no-sandbox");
+         options.addArguments("--disable-dev-shm-usage");
+         options.addArguments("--disable-extensions");
+         options.addArguments("--disable-setuid-sandbox");
+         options.addArguments("--remote-allow-origins=*");
+         options.addArguments("--window-size=1920,1080");  // replaces maximize()
+         driver = new ChromeDriver(options);
+         // REMOVE: driver.manage().window().maximize();
+         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         }
 
         @AfterAll
