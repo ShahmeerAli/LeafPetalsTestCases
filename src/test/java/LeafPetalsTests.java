@@ -28,20 +28,48 @@ public class LeafPetalsTests {
         private static final String ADMIN_EMAIL = "admin@leafpetals.com";
         private static final String ADMIN_PASSWORD = "Admin@1234";
 
+       
+
+
+
         @BeforeAll
-        static void setUp() {
-         ChromeOptions options = new ChromeOptions();
-         options.addArguments("--headless=new");
-         options.addArguments("--disable-gpu");
-         options.addArguments("--no-sandbox");
-         options.addArguments("--disable-dev-shm-usage");
-         options.addArguments("--disable-extensions");
-         options.addArguments("--disable-setuid-sandbox");
-         options.addArguments("--remote-allow-origins=*");
-         options.addArguments("--window-size=1920,1080");  // replaces maximize()
-         driver = new ChromeDriver(options);
-         // REMOVE: driver.manage().window().maximize();
-         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        static void setUp() throws Exception {
+          ChromeOptions options = new ChromeOptions();
+          options.addArguments("--headless=new");
+          options.addArguments("--disable-gpu");
+          options.addArguments("--no-sandbox");
+          options.addArguments("--disable-dev-shm-usage");
+          options.addArguments("--disable-extensions");
+          options.addArguments("--disable-setuid-sandbox");
+          options.addArguments("--remote-allow-origins=*");
+          options.addArguments("--window-size=1920,1080");
+          driver = new ChromeDriver(options);
+          wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+          // Wait for the app to be fully up before seeding
+          Thread.sleep(5000);
+          seedTestUser();
+        }
+
+        private static void seedTestUser() {
+         try {
+                String registerUrl = "http://localhost:8081/api/auth/register";
+                String jsonBody = "{\"name\":\"Test User\",\"email\":\"test@leafpetals.com\",\"password\":\"Test@1234\"}";
+
+                 java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                 .uri(java.net.URI.create(registerUrl))
+                .header("Content-Type", "application/json")
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+                 java.net.http.HttpResponse<String> response =
+                 client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+
+                System.out.println("Seed user response: " + response.statusCode() + " " + response.body());
+         } catch (Exception e) {
+                System.out.println("Seed user failed: " + e.getMessage());
+        }
         }
 
         @AfterAll
